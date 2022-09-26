@@ -14,7 +14,7 @@
 
 ### Database tables and fields:
 **users**:
-`id`, `first_name`, `last_name`, `username`, `password`, `created_at`, `deleted_at`
+`id`, `first_name`, `last_name`, `username`, `password`, `access_key`, `created_at`, `deleted_at`
 
 **clients**:
 `id`, `first_name`, `last_name`, `email_address`, `phone_number`, `created_at`, `updated_at`, `deleted_at`
