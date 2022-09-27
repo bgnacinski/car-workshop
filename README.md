@@ -3,7 +3,7 @@
 - Automated status notification(diagnosed, repaired etc.)
 - Storing car's repair history
 - Quantity of parts in warehouse(maybe ordering from merchant instead(hard to accomplish without external hardware))
-- Work-management(?)
+- Work-management(e.g. declining further repair orders due to 'high demand', automatic or manual switching)
 
 ## Tech-stuff:
 ### Stack:
