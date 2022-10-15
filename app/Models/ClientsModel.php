@@ -22,8 +22,32 @@ class ClientsModel extends Model
     protected $deletedField  = 'deleted_at';
 
     // Validation
-    protected $validationRules      = [];
-    protected $validationMessages   = [];
+    protected $validationRules      = [
+        "first_name" => "required|max_length[255]",
+        "last_name" => "required|max_length[255]",
+        "email_address" => "required|is_unique[clients.email_address]|max_length[255]",
+        "phone_number" => "required|is_unique[clients.phone_number]|max_length[15]"
+    ];
+    protected $validationMessages   = [
+        "first_name" => [
+            "required" => "First name is required.",
+            "max_length" => "Maximum length of first name is 255 characters."
+        ],
+        "last_name" => [
+            "required" => "Last name is required.",
+            "max_length" => "Maximum length of last name is 255 characters."
+        ],
+        "email_address" => [
+            "required" => "Email address is required.",
+            "is_unique" => "Email address must be unique.",
+            "max_length" => "Maximum length of email address is 255 characters.",
+        ],
+        "phone_number" => [
+            "required" => "Phone number is required.",
+            "is_unique" => "Phone number must be unique.",
+            "max_length" => "Maximum length of phone number is 15 characters."
+        ],
+    ];
     protected $skipValidation       = false;
     protected $cleanValidationRules = true;
 
@@ -40,6 +64,7 @@ class ClientsModel extends Model
 
     public function beforeInsert(array $data){
         $data["data"]["created_at"] = gmdate("c");
+        $data["data"]["phone_number"] = str_replace(" ", "", $data["data"]["phone_number"]);
 
         return $data;
     }
@@ -84,6 +109,29 @@ class ClientsModel extends Model
         else{
             return [
                 "status" => "empty"
+            ];
+        }
+    }
+
+    public function addClient(array $input) :array{
+        $val_result = $this->validate($input);
+
+        if($val_result){
+            $client_obj = new Client($input);
+
+            $this->save($client_obj);
+
+            $client_data = $this->getClientByID($this->getInsertID());
+
+            return [
+                "status" => "success",
+                "client_data" => $client_data
+            ];
+        }
+        else{
+            return [
+                "status" => "valerr",
+                "errors" => $this->errors()
             ];
         }
     }

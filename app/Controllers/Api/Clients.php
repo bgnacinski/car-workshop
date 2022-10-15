@@ -29,7 +29,7 @@ class Clients extends ResourceController
     }
 
     public function show($id = null){
-        if(is_null($id) || !is_numeric($id)){
+        if(!is_numeric($id)){
             return $this->failNotFound("Invalid client ID.");
         }
 
@@ -43,6 +43,26 @@ class Clients extends ResourceController
 
             default:
                 return $this->failNotFound("Client with this ID not found.");
+        }
+    }
+
+    public function create(){
+        $input = [
+            "first_name" => $this->request->getPost("first_name"),
+            "last_name" => $this->request->getPost("last_name"),
+            "email_address" => $this->request->getPost("email_address"),
+            "phone_number" => $this->request->getPost("phone_number"),
+        ];
+
+        $model = new ClientsModel();
+        $result = $model->addClient($input);
+
+        switch($result["status"]){
+            case "success":
+                return $this->respondCreated($result);
+
+            default:
+                return $this->failValidationErrors($result["errors"]);
         }
     }
 }
