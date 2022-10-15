@@ -10,9 +10,9 @@ class ClientsModel extends Model
     protected $table            = 'clients';
     protected $useAutoIncrement = true;
     protected $returnType       = Client::class;
-    protected $useSoftDeletes   = true;
+    protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = ["first_name", "last_name", "email_address", "phone_number", "created_at", "updated_at", "deleted_at"];
+    protected $allowedFields    = ["first_name", "last_name", "email_address", "phone_number", "created_at", "updated_at"];
 
     // Dates
     protected $useTimestamps = false;
@@ -59,7 +59,7 @@ class ClientsModel extends Model
     protected $afterUpdate    = [];
     protected $beforeFind     = [];
     protected $afterFind      = [];
-    protected $beforeDelete   = ["beforeDelete"];
+    protected $beforeDelete   = [];
     protected $afterDelete    = [];
 
     public function beforeInsert(array $data){
@@ -71,12 +71,6 @@ class ClientsModel extends Model
 
     public function beforeUpdate(array $data){
         $data["data"]["updated_at"] = gmdate("c");
-
-        return $data;
-    }
-
-    public function beforeDelete(array $data){
-        $data["data"]["deleted_at"] = gmdate("c");
 
         return $data;
     }
@@ -132,6 +126,25 @@ class ClientsModel extends Model
             return [
                 "status" => "valerr",
                 "errors" => $this->errors()
+            ];
+        }
+    }
+
+    public function deleteClient(int $client_id) :array{
+        $client_data = $this->find($client_id);
+
+        if($client_data){
+            $this->delete($client_id);
+
+            return [
+                "status" => "success",
+                "message" => "Client with ID $client_id deleted."
+            ];
+        }
+        else{
+            return [
+                "status" => "notfound",
+                "message" => "Client with ID $client_id not found."
             ];
         }
     }

@@ -44,11 +44,6 @@ class Clients extends Migration
                 "type" => "varchar",
                 "constraint" => 50,
                 "null" => true
-            ],
-            "deleted_at" => [
-                "type" => "varchar",
-                "constraint" => 50,
-                "null" => true
             ]
         ]);
 

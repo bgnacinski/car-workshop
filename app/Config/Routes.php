@@ -46,8 +46,9 @@ $routes->group("api", ["namespace" => "App\\Controllers\\Api"], function($routes
     // TODO add auth filter
     $routes->group("clients", function($routes){
         $routes->get("/", "Clients::index");
-        $routes->get("(:any)", "Clients::show/$1");
+        $routes->get("(:num)", "Clients::show/$1");
         $routes->post("create", "Clients::create");
+        $routes->post("delete/(:num)", "Clients::delete/$1");
     });
 });
 

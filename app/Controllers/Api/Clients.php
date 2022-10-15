@@ -65,4 +65,21 @@ class Clients extends ResourceController
                 return $this->failValidationErrors($result["errors"]);
         }
     }
+
+    public function delete($id = null){
+        if(!is_numeric($id)){
+            return $this->failNotFound("Invalid client ID. $id");
+        }
+
+        $model = new ClientsModel();
+        $result = $model->deleteClient($id);
+
+        switch($result["status"]){
+            case "success":
+                return $this->respondDeleted($result);
+
+            default:
+                return $this->failNotFound($result["message"]);
+        }
+    }
 }
