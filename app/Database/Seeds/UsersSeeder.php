@@ -13,7 +13,7 @@ class UsersSeeder extends Seeder
             "first_name" => "Tony",
             "last_name" => "Stark",
             "username" => "tony.stark",
-            "password" => password_hash("qwe", PASSWORD_DEFAULT)
+            "password" => "qwe"
         ];
 
         $model = new UsersModel();
