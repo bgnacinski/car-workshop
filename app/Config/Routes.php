@@ -42,6 +42,10 @@ $routes->group("api", ["namespace" => "App\\Controllers\\Api"], function($routes
         $routes->post("login", "Users::index");
         $routes->post("signup", "Users::signup");
     });
+
+    $routes->group("clients", function($routes){
+        $routes->get("/", "Clients::index");
+    });
 });
 
 /*
