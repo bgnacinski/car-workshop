@@ -45,6 +45,7 @@ $routes->group("api", ["namespace" => "App\\Controllers\\Api"], function($routes
 
     $routes->group("clients", function($routes){
         $routes->get("/", "Clients::index");
+        $routes->get("(:any)", "Clients::show/$1");
     });
 });
 

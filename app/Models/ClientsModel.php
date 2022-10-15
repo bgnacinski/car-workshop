@@ -71,4 +71,20 @@ class ClientsModel extends Model
             ];
         }
     }
+
+    public function getClientByID(int $client_id) :array{
+        $client_data = $this->find($client_id);
+
+        if($client_data){
+            return [
+                "status" => "success",
+                "client_data" => $client_data
+            ];
+        }
+        else{
+            return [
+                "status" => "empty"
+            ];
+        }
+    }
 }

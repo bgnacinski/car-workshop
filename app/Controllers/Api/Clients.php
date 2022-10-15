@@ -27,4 +27,22 @@ class Clients extends ResourceController
                 return $this->respond($result);
         }
     }
+
+    public function show($id = null){
+        if(is_null($id) || !is_numeric($id)){
+            return $this->failNotFound("Invalid client ID.");
+        }
+
+        $model = new ClientsModel();
+
+        $result = $model->getClientByID($id);
+
+        switch($result["status"]){
+            case "success":
+                return $this->respond($result);
+
+            default:
+                return $this->failNotFound("Client with this ID not found.");
+        }
+    }
 }
