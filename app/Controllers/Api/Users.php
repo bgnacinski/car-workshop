@@ -38,5 +38,13 @@ class Users extends ResourceController
         $model = new UsersModel();
 
         $result = $model->signup($input);
+
+        switch($result["status"]){
+            case "success":
+                return $this->respondCreated($result);
+
+            default:
+                return $this->failValidationErrors($result["errors"]);
+        }
     }
 }

@@ -3,12 +3,13 @@
 namespace App\Models;
 
 use CodeIgniter\Model;
+use App\Entities\User;
 
 class UsersModel extends Model
 {
     protected $table            = 'users';
     protected $useAutoIncrement = true;
-    protected $returnType       = \App\Entities\User::class;
+    protected $returnType       = User::class;
     protected $useSoftDeletes   = true;
     protected $protectFields    = true;
     protected $allowedFields    = ["first_name", "last_name", "username", "password", "access_key", "created_at", "updated_at", "deleted_at"];
@@ -21,7 +22,12 @@ class UsersModel extends Model
     protected $deletedField  = 'deleted_at';
 
     // Validation
-    protected $validationRules      = [];
+    protected $validationRules      = [
+        "first_name" => "max_length[255]",
+        "last_name" => "max_length[255]",
+        "username" => "required|is_unique[users.username]|min_length[4]|max_length[255]",
+        "password" => "required|min_length[8]"
+    ];
     protected $validationMessages   = [];
     protected $skipValidation       = false;
     protected $cleanValidationRules = true;
@@ -50,6 +56,7 @@ class UsersModel extends Model
     public function beforeInsert(array $data){
         $data["data"]["access_key"] = $this->generateAccessKey();
         $data["data"]["created_at"] = gmdate("c");
+        $data["data"]["password"] = password_hash($data["data"]["password"], PASSWORD_DEFAULT);
 
         return $data;
     }
@@ -64,5 +71,43 @@ class UsersModel extends Model
         $data["data"]["deleted_at"] = gmdate("c");
 
         return $data;
+    }
+
+    public function login(string $username, string $password) :array{
+        $result = $this->where("username", $username)->first();
+
+        if($result && password_verify($password, $result->password)) {
+            return [
+                "status" => "success",
+                "access_key" => $result->access_key
+            ];
+        }
+        else{
+            return [
+                "status" => "denied",
+                "message" => "Access denied."
+            ];
+        }
+    }
+
+    public function signup(array $input) :array{
+        $val_result = $this->validate($input);
+
+        if($val_result){ // validation passed
+            $user_obj = new User($input);
+
+            $this->save($user_obj);
+
+            return [
+                "status" => "success",
+                "message" => "Now you can log in."
+            ];
+        }
+        else{
+            return [
+                "status" => "valerr",
+                "errors" => $this->errors()
+            ];
+        }
     }
 }
