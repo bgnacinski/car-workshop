@@ -66,6 +66,36 @@ class Clients extends ResourceController
         }
     }
 
+    public function update($id = null){
+        if(!is_numeric($id)){
+            return $this->failNotFound("Invalid client ID. $id");
+        }
+
+        $input = [
+            "first_name" => $this->request->getPost("first_name"),
+            "last_name" => $this->request->getPost("last_name"),
+            "email_address" => $this->request->getPost("email_address"),
+            "phone_number" => $this->request->getPost("phone_number"),
+        ];
+
+        $model = new ClientsModel();
+        $result = $model->updateClient($id, $input);
+
+        switch($result["status"]){
+            case "success":
+                return $this->respond($result);
+
+            case "valerr":
+                return $this->failValidationErrors($result["errors"]);
+
+            case "nodata":
+                return $this->fail($result);
+
+            default:
+                return $this->failNotFound($result["message"]);
+        }
+    }
+
     public function delete($id = null){
         if(!is_numeric($id)){
             return $this->failNotFound("Invalid client ID. $id");

@@ -48,6 +48,7 @@ $routes->group("api", ["namespace" => "App\\Controllers\\Api"], function($routes
         $routes->get("/", "Clients::index");
         $routes->get("(:num)", "Clients::show/$1");
         $routes->post("create", "Clients::create");
+        $routes->post("update/(:num)", "Clients::update/$1");
         $routes->post("delete/(:num)", "Clients::delete/$1");
     });
 });

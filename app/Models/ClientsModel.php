@@ -23,8 +23,8 @@ class ClientsModel extends Model
 
     // Validation
     protected $validationRules      = [
-        "first_name" => "required|max_length[255]",
-        "last_name" => "required|max_length[255]",
+        "first_name" => "permit_empty|max_length[255]",
+        "last_name" => "permit_empty|max_length[255]",
         "email_address" => "required|is_unique[clients.email_address]|max_length[255]",
         "phone_number" => "required|is_unique[clients.phone_number]|max_length[15]"
     ];
@@ -71,6 +71,7 @@ class ClientsModel extends Model
 
     public function beforeUpdate(array $data){
         $data["data"]["updated_at"] = gmdate("c");
+        $data["data"]["phone_number"] = str_replace(" ", "", $data["data"]["phone_number"]);
 
         return $data;
     }
@@ -126,6 +127,56 @@ class ClientsModel extends Model
             return [
                 "status" => "valerr",
                 "errors" => $this->errors()
+            ];
+        }
+    }
+
+    public function updateClient(int $client_id, array $input) :array{
+        $client_to_update = $this->find($client_id);
+
+        if($client_to_update){
+            $client_array = $client_to_update->toRawArray();
+
+            //removing empty fields
+            foreach($input as $key => $value) {
+                if(is_null($value) || $client_array[$key] == $value){
+                    unset($input[$key]);
+                }
+            }
+
+            if(!empty($input)){
+                $val_result = $this->validate($input);
+
+                if($val_result){
+                    $client_to_update->fill($input);
+
+                    $this->update($client_id, $client_to_update);
+
+                    $client_data = $this->getClientByID($client_id);
+
+                    return [
+                        "status" => "success",
+                        "client_data" => $client_data
+                    ];
+                }
+                else{
+                    return [
+                        "status" => "valerr",
+                        "errors" => $this->errors()
+                    ];
+                }
+            }
+            else{
+                return [
+                    "status" => "nodata",
+                    "message" => "No data to update."
+                ];
+            }
+        }
+        else{
+            return [
+                "status" => "notfound",
+                "message" => "Client with this ID not found."
             ];
         }
     }
